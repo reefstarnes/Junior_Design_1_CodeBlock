@@ -1,0 +1,51 @@
+include libraries for Arduino GPIO, distSensor & LCD
+
+define global constants as 32, 21, 23, 0x27 and 12 as LED_PIN, SDA_PIN, SCL_PIN, ADDRESS_DISPLAY and SENSOR_READING_OFFSET respectfully
+
+define global variables:
+    Create a distance sensor & LCD object
+
+ERROR():
+    Loop forever:
+        turn LED on for 250ms then off for 250 ms
+
+SETUP():
+	Set LED_PIN as an output pin
+	//init distance sensor
+    If initialization fails, call ERROR()
+	Wait 500 milliseconds for the sensor to init
+	//init LCD
+    	Turn on the backlight & Set the cursor to the top-left corner
+    	Wait 500 milliseconds for display to init
+    	Clear the display
+
+MAIN LOOP():
+    Create variable “dist” to store the distance measurement
+	Read the distance from the sensor and store it in “dist”
+	Add `SENSOR_READING_OFFSET` to `dist` to adjust the reading
+	
+	/*now that we have the sensor data we must handle it accordingly
+    */with the display
+
+    If `dist` is between 90 mm and 1360 mm:	//acc 10% error margin
+        Display "Distance:" on the first line of the LCD
+        Display the distance value in millimeters on second line
+
+        If `dist` is less than or equal to 550 mm: //acc 10% error margin
+            Turn on the LED
+        Else:
+            Turn off the LED
+            
+    Else:
+        Display "Out of Range" on LCD and Turn off the LED
+
+    Wait for 1 second before taking the next reading, aka the main loop starts over
+
+
+
+
+
+
+
+
+    
