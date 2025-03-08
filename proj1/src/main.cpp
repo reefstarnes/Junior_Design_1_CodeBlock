@@ -9,8 +9,8 @@
 #define ADDRESS_DISPLAY 0x27
 //ADDRESS_SENSOR default is 0x29
 
-
-#define SENSOR_READING_OFFSET 12;
+//scrapped line for tuning sensor
+//#define SENSOR_READING_OFFSET 0;
 
 //global variables
 Adafruit_VL53L0X distSensor = Adafruit_VL53L0X();
@@ -43,12 +43,12 @@ void setup() {
 
 void loop() {
   VL53L0X_RangingMeasurementData_t dist;
-
+  bool ledStatus = false;
   //get sensor distance reading
   distSensor.rangingTest(&dist, false);
  
-  //offset sensor reading
-  dist.RangeMilliMeter += SENSOR_READING_OFFSET;
+  //scrapped line for tuning sensor.
+  //dist.RangeMilliMeter += SENSOR_READING_OFFSET;
 
 
   //reset from last reading
@@ -57,6 +57,7 @@ void loop() {
 
   //display only distances 0.1 m <= distances <= 1.2 m  with +- 10%
   //this means display readings dist of 90 mm <= readings <= 1080 mm    
+  
   
   if (dist.RangeMilliMeter >= 90 && dist.RangeMilliMeter <= 1360){
     display.print("Distance:");
@@ -67,17 +68,21 @@ void loop() {
     //light up led only distances 0.5 m <= distances with +- 10%
     //this means led lights up for readings dist of 550 mm <= readings
     if (dist.RangeMilliMeter <= 550 ){
-      digitalWrite(LED_PIN, HIGH);
+      //object is there
+      ledStatus = true;
     }
     else{
-      digitalWrite(LED_PIN, LOW);
+      //object is removed aka not there
+      ledStatus = false;
     }
     
   }
   else{
     display.print("Out of Range");
-    digitalWrite(LED_PIN, LOW);
+    ledStatus = false;
   }
+  //update pin based on LED status
+  digitalWrite(LED_PIN, ledStatus);
   //wait one second to take another reading
   delay(1000);
 }
